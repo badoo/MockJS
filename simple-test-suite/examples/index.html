@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../TestSuite.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script type="text/javascript" charset="utf-8">
+        /*Our code*/
+        function sum(a, b){
+            return a+b;
+        }
+        </script>
+        
+        
+        <script type="text/javascript" charset="utf-8">
+        
+        /* Our Test
+        
+        // Each method test* is run as a test case
+        // setup is run before every test case, and teardown after
+        */
+        
+        TestSuite.addTest("Sum Function", {
+    
+            //test setup
+            setup:function(){
+                this.a = 5;
+                this.b = 5;
+            },
+            //test teardown
+            teardown:function(){
+                this.a = 5;
+                this.b = 5;
+            },
+    
+            testSum:function(){
+                //check sum result
+                this.assert("Sums Correctly", (sum(this.a, this.b) == this.a+this.b));
+            },
+    
+            testSumReturnsNumber:function(){
+                //test code
+                var result = sum(this.a, this.b);
+        
+                //check if it returns a number
+                this.assert("Returns a Number", typeof result == "number");
+            }
+        });
+        
+        TestSuite.runAll();
+        </script>
+    </head>
+    <body>
+        <pre id="TestSuiteResults">
+            
+        </pre>
+    </body>
+</html>

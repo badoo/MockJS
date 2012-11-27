@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <!-- NOTE: these test cases test the the actual MockJS Framework -->
+        
+        <script src="../../simple-test-suite/TestSuite.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../Mock.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script type="text/javascript" charset="utf-8">
+        
+        /* Our testception objects */
+        //we know they work!
+        var anObj = {
+            scopeTest : "a",
+            foo:function(){ return this.scopeTest; },   //simple return + scope test
+            bar:function(check){ if(check) return "b"; },   //check param
+            baz:function(f, c){ if(f) return function(){return c}; },   //passthru
+        }
+        
+        //test function
+        function aFunction(a){
+            if(this==window || !a) return "d";
+            else return this.scopeTest;
+        }
+        
+        
+        
+        //our object being actually tested
+        var testObject = function(myObj){
+            this.init(myObj);
+        }
+        testObject.prototype = {
+            scopeTest : "b",
+            init:function(myObj){
+                //keep methods
+                this.obj = myObj;
+                //copy qux method methods
+                this.foo = myObj.foo;
+            },
+            doFoo:function(){return this.obj.foo();},
+            doBar:function(a){return this.obj.bar(a);},
+            doBaz:function(a, b){return this.obj.baz(a, b);},
+            doQux:function(a){ 
+                if(!a) return aFunction(); 
+                else return aFunction.apply(this, [a]);
+            }
+        }
+        
+        
+        
+        
+        
+        
+        /*common tests - make sure they are the same*/
+        function common_tests(myTest){
+            //test a method of the mock object
+            this.assert(myTest.doFoo()=="a", "doFoo() is a");
+                
+            this.assert(myTest.doBar(false)==undefined, "doBar(false) is undefined");
+            this.assert(myTest.doBar(true)=="b", "doBar(true) is b");
+                
+            this.assert(myTest.doBaz(false, null)==undefined, "doBaz() undefined case");
+            var f = function(){return true};
+            this.assert(typeof myTest.doBaz(true, f) == 'function', "doBaz() returns function");
+            this.assert(myTest.doBaz(true, f)()==f, "doBaz() callback returns given cb");
+                
+            //test a method in a different context
+            this.assert(myTest.foo()=="b", "obj.foo() is b");
+                
+            //function
+            this.assert(aFunction() == "d", "aFunction() works");
+            //function in object
+            this.assert(myTest.doQux() == "d", "doQux() works");
+            //context
+            this.assert(myTest.doQux(true) == "b", "doQux(true)  works");
+        }
+        
+        /* Our Real Tests */
+        TestSuite.addTest("Real Objects", {
+    
+            //test setup
+            setup:function(){},
+            
+            //test teardown
+            teardown:function(){},
+    
+            testOurTestObjects:function(){
+                
+                var myTest = new testObject(anObj);
+                
+                common_tests.apply(this, [myTest]);
+                
+                //test failures
+                this.shouldFail(function(){
+                    zemariapah();
+                }, "shouldFail works as expected");
+                
+            }
+            
+        });
+        
+        /* Testing our Mock Objects */
+        TestSuite.addTest("Mock Objects", {
+    
+            //test setup
+            setup:function(){
+                
+                //MOCK AN OBJECT
+                //setup the mock object
+                myMock = Mock(anObj);
+                
+                //when called, foo() returns "a", doesn't matter what arguments it is called with (Note: default myMock context)
+                when( myMock.foo(Match.everything) )
+                    .thenReturn("a");
+                
+                //bar called with (true) return "b"
+                when( myMock.bar(true) )
+                    .thenReturn("b");
+                //all other possible calls to bar return undefined
+                when( myMock.bar(Match.everything) )
+                    .thenReturn(undefined);
+                
+                //a call to baz with the params (true, f), being f any function, will return the f function
+                when( myMock.baz(true, Match.anyFunction) )
+                    .thenReturn(function(a, f){
+                        return function(){
+                            return f;
+                        };
+                    });
+                    
+                //a call to foo on any context will always return context.scopeTest
+                when( myMock.foo.apply(Match.anyContext, [Match.everything]) )
+                    .thenReturn(function(){
+                        return this.scopeTest;
+                    });
+                
+                
+                //mocked function + caching the reference for teardown
+                
+                //let's save a reference to the function to test a match on teardown
+                this.functionReference = aFunction;
+                
+                //save it now to put it back on teardown  
+                //replace the actual reference with our mocked function (for internal uses in other objects)
+                aFunction = Mock.andSave(aFunction, 'aFunction');   
+                
+                matchTrue = function(p){ 
+                    return p ? true : false
+                }; //a parameter matcher callback
+                
+                //a call on the function with any params, will return "d" 
+                //notice validity of p argument is matched via our own callback and no context is given
+                when( aFunction(Match.everything) )
+                    .thenReturn("d");
+                //a call on the function with a true callback sent in, called on any context will return context.scopeTest
+                when( aFunction.apply(Match.anyContext, [matchTrue]) )
+                    .thenReturn(function(){
+                        return this.scopeTest;
+                    });
+                    
+                this.myMock = myMock;   //save it for test cases
+            },
+            
+            //test teardown
+            teardown:function(){
+                aFunction = Mock.teardown('aFunction');
+                //make sure aFunction is the same
+                this.assert(this.functionReference==aFunction, "aFunction reference is back on it's place");
+            },
+    
+            testOurMockObjects:function(){
+                
+                var myTest = new testObject(this.myMock);
+                
+                common_tests.apply(this, [myTest]);
+                
+                //Mock verifiers
+                verify(Acts.once, myMock.foo(Match.everything));
+                this.log("verified: myMock.foo(Match.everything) called times(1)");
+                
+                verify(Acts.atLeast(1), myMock.foo.apply(Match.anyContext, [Match.everything]));
+                this.log("verified: myMock.foo.apply(Match.anyContext, [Match.everything]) called atLeast(1)");
+                verify(Acts.atMost(1), myMock.foo.apply(Match.anyContext, [Match.everything]));
+                this.log("verified: myMock.foo.apply(Match.anyContext, [Match.everything]) called atMost(1)");
+                
+                verify(Acts.times(1), myMock.bar(true));
+                this.log("verified: myMock.bar(true) called once()");
+                verify(Acts.times(1), myMock.bar(Match.everything));
+                this.log("verified: myMock.bar(Match.everything) called once()");
+                
+                verify(Acts.times(1), myTest.doBaz(false, null));
+                this.log("verified: myMock.baz(false, null) called once()");
+                verify(Acts.times(2), myMock.baz(true, Match.anyFunction));
+                this.log("verified: myMock.baz(true, Match.anyFunction) called once()");
+                verify(Acts.never, myMock.baz("hello"));
+                this.log("verified: myMock.baz('hello') is never called");
+                
+                verify(Acts.times(2), aFunction(Match.everything));
+                this.log("verified: aFunction(Match.everything) called times(2)");
+                verify(Acts.times(1), aFunction.apply(Match.anyContext, [matchTrue]));
+                this.log("verified: aFunction.apply(Match.anyContext, [matchTrue]) called once()");
+                
+                //test failures
+                this.shouldFail(function(){
+                    verify(Acts.atLeast(2), myMock.foo(Match.everything));
+                }, "fail check: myMock.foo(Match.everything) is not called atLeast(2)");
+                
+                //TODO: add more failure tests
+            }
+            
+        });
+        
+        TestSuite.runAll();
+        </script>
+    </head>
+    <body>
+        <pre id="TestSuiteResults">
+            
+        </pre>
+    </body>
+</html>
