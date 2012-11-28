@@ -37,11 +37,13 @@ Your Mockito classics (rewritten directly from [Mockito's documentation](http://
 
 **<a href="#1">1</a>. Verify interactions**
 
-    var mockArray = Mock([]);   //create the mock object
+```javascript
+var mockArray = Mock([]);   //create the mock object
 
-    mockArray.push("one");
+mockArray.push("one");
 
-    verify( Acts.once, mockArray.push("one") );
+verify( Acts.once, mockArray.push("one") );
+```
 
 **<a href="#1">1</a>. Stubbing method calls**
 
