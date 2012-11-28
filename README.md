@@ -17,8 +17,10 @@ For specific unit testing tools:
 
 Or you can send your own context object:
 
-    Mock.hookTo(MyTestingTool.globalTestScope);
-    
+```javascript
+Mock.hookTo(MyTestingTool.globalTestScope);
+```
+
 Quick test / check:
 
 - check and run /src/testception/index.html in your browser (outputs test results in console)
@@ -47,51 +49,59 @@ verify( Acts.once, mockArray.push("one") );
 
 **<a href="#1">1</a>. Stubbing method calls**
 
-    when( mockArray.push("one") ).thenReturn(1);
+```javascript
+when( mockArray.push("one") ).thenReturn(1);
 
-    console.log( mockArray.push("one") );   //prints "1"
+console.log( mockArray.push("one") );   //prints "1"
 
-    verify( Acts.once, mockArray.push("one") );
-    
+verify( Acts.once, mockArray.push("one") );
+```
+
 **<a href="#3">3</a>. Argument matchers**
 
-    when( mockArray.push(Match.anything) ).thenReturn("hello!");
+```javascript
+when( mockArray.push(Match.anything) ).thenReturn("hello!");
 
-    console.log( mockArray.push("one") );   //prints "hello!"
-    console.log( mockArray.push(999) );   //prints "hello!"
+console.log( mockArray.push("one") );   //prints "hello!"
+console.log( mockArray.push(999) );   //prints "hello!"
     
-    //look into 102. for more information
-
+//look into 102. for more information
+```
 
 **<a href="#4">4</a>. Verifying exact number of invocations / at least x / never**
 
-    verify( Acts.never, mockArray.push("one") );        //ok
+```javascript
+verify( Acts.never, mockArray.push("one") );        //ok
     
-    mockArray.push("one");
-    verify( Acts.once, mockArray.push("one") );         //ok
-    verify( Acts.atLeast(1), mockArray.push("one") );   //ok
+mockArray.push("one");
+verify( Acts.once, mockArray.push("one") );         //ok
+verify( Acts.atLeast(1), mockArray.push("one") );   //ok
     
-    mockArray.push("one");
-    mockArray.push("one");
-    verify( Acts.atMost(2), mockArray.push("one") );    //fails
+mockArray.push("one");
+mockArray.push("one");
+verify( Acts.atMost(2), mockArray.push("one") );    //fails
     
-    //look into 103. for more information
+//look into 103. for more information
+```
 
 **<a href="#5">5</a>. Stubbing void methods with exceptions**
 
-    when( mockArray.push(Match.anything) ).thenThrow("Hi, I am an expcetion");
+```javascript
+when( mockArray.push(Match.anything) ).thenThrow("Hi, I am an expcetion");
     
-    mockArray.push("something");    //throws our exception
+mockArray.push("something");    //throws our exception
+```
 
 **<a href="#11">11</a>. Stubbing with callbacks**
 
-    when( mockArray.push(Match.anything) ).thenReturn(function(arg){ 
-        console.log("array.push('"+arg+"') called!");
-        return "hello!"; 
-    });
+```javascript
+when( mockArray.push(Match.anything) ).thenReturn(function(arg){ 
+    console.log("array.push('"+arg+"') called!");
+    return "hello!"; 
+});
     
-    console.log( mockArray.push("one") );   //prints "array.push('one') called!" and "hello!"
-    
+console.log( mockArray.push("one") );   //prints "array.push('one') called!" and "hello!"
+```    
 
 **<a href="#12">12</a>. thenReturn() | thenThow() | thenAnswer() | thenNothing() | thenCallRealMethod() family of methods**
 
@@ -127,8 +137,10 @@ You have more questions please refer to our issues section on github.
 
 **<a href="#26">26</a>. Mocking details**
 
-    Mock.isMock(someObject);
-    
+```javascript
+Mock.isMock(someObject);
+```
+   
 *Not Yet Implemented:*
 
 - Mock.isSpy 
@@ -140,136 +152,150 @@ Docs 2. MockJS specific features
 
 **<a href="#100">100</a>. Mock in-scope functions**
 
-    function sum(a, b){
-        return a+b;
-    }
+```javascript
+function sum(a, b){
+    return a+b;
+}
     
-    var mockSum = Mock(sum);
+var mockSum = Mock(sum);
     
-    mockSum(5, 5); //returns undefined (default)
+mockSum(5, 5); //returns undefined (default)
+```
 
 **<a href="#101">101</a>. Match contexts**
     
-    when( mockArray.push.apply(Match.anyContext, [Match.anything]) ).thenReturn("something");
+```javascript
+when( mockArray.push.apply(Match.anyContext, [Match.anything]) ).thenReturn("something");
     
-    mockArray.push.apply([], ["one"]);
+mockArray.push.apply([], ["one"]);
     
-    verify( Acts.once, mockArray.push.apply(Match.anyContext, [Match.anything]) );
+verify( Acts.once, mockArray.push.apply(Match.anyContext, [Match.anything]) );
+```
     
 **<a href="#102">102</a>. Matchers (Match)**
     
-    //argument matchers
-    Match.anyString         //argument is a string
-    Match.anyInt            //argument is an integer
-    Match.anyNumber         //argument is a number
-    Match.anyFunction       //argument is a function
-    Match.anything          //argument is not undefined  
+```javascript
+//argument matchers
+Match.anyString         //argument is a string
+Match.anyInt            //argument is an integer
+Match.anyNumber         //argument is a number
+Match.anyFunction       //argument is a function
+Match.anything          //argument is not undefined  
     
-    Match.everything        //special matcher - all arguments from this point on will be accepted
-                            //eg. when( foo("a", Match.everything) ) will match foo("a"), foo("a", "one"), foo("a", 1, 2, 3, 4, 5, 6);
+Match.everything        //special matcher - all arguments from this point on will be accepted
+                        //eg. when( foo("a", Match.everything) ) will match foo("a"), foo("a", "one"), foo("a", 1, 2, 3, 4, 5, 6);
                             
                             
-    //context matcher
-    Match.anyContext        //all contexts will be accepted
+//context matcher
+Match.anyContext        //all contexts will be accepted
+```
     
 **<a href="#103">103</a>. Call Counters (Acts)**
     
-    Acts.times(x);  //verifies call acted exactly x number of times
-    Acts.never      //never happens (short for Acts.times(0))
-    Acts.once       //acts once (short for Acts.times(1))
-    Acts.atLeast(x) //acts at least x times
-    Acts.atMost(x)  //acts at most x times
+```javascript
+Acts.times(x);  //verifies call acted exactly x number of times
+Acts.never      //never happens (short for Acts.times(0))
+Acts.once       //acts once (short for Acts.times(1))
+Acts.atLeast(x) //acts at least x times
+Acts.atMost(x)  //acts at most x times
     
-    //Note: the following syntax should not be used:
-    var a = Acts.never
-    verify( a, foo() );                 //works 1st time
-    verify( a, foo("one") );            //throws unexpected action in MockJS on all further uses
+//Note: the following syntax should not be used:
+var a = Acts.never
+verify( a, foo() );                 //works 1st time
+verify( a, foo("one") );            //throws unexpected action in MockJS on all further uses
     
     
-    verify( Acts.never, foo("one") );   //always use the complete API syntax
+verify( Acts.never, foo("one") );   //always use the complete API syntax
+```
     
 
 **<a href="#104">104</a>. Custom argument matchers**
     
-    function myClass(){
-    }
+```javascript
+function myClass(){
+}
     
-    var matchObjectClass = function(arg){
-        return arg instanceof myClass;
-    }
+var matchObjectClass = function(arg){
+    return arg instanceof myClass;
+}
     
-    when( foo(matchObjectClass) ).thenReturn("something");
+when( foo(matchObjectClass) ).thenReturn("something");
     
-    foo(new myClass());  //returns "something"
+foo(new myClass());  //returns "something"
     
-    verify( Acts.once, foo(matchObjectClass) ); //verifies correctly
+verify( Acts.once, foo(matchObjectClass) ); //verifies correctly
+```
     
 **<a href="#105">105</a>. Save and restore global references**
 
-    //let's consider our global function foo
-    var foo = function(a){
-        alert(a);
-        return "hello";
-    }
+```javascript
+//let's consider our global function foo
+var foo = function(a){
+    alert(a);
+    return "hello";
+}
     
-    foo = Mock.andSave(foo, "myFoo");        //mocks function foo but keeps a reference for teardown (below)
+foo = Mock.andSave(foo, "myFoo");        //mocks function foo but keeps a reference for teardown (below)
     
-    when( foo(Match.anything) ).thenReturn("hello");
+when( foo(Match.anything) ).thenReturn("hello");
     
-    console.log( foo("hey") );         //prints "hello" into console
+console.log( foo("hey") );         //prints "hello" into console
     
     
-    //teardown
-    foo = Mock.teardown("myFoo");    //sets foo back to the original function
+//teardown
+foo = Mock.teardown("myFoo");    //sets foo back to the original function
     
-    foo("hey");         //alerts "hey"
+foo("hey");         //alerts "hey"
+```
     
 **<a href="#106">106</a>. Mock.new() - create mocks for inacessible objects**
 
-    //Consider the function we need to mock:
-    function $(a){ 
-        var privateObject = {
-            whisper:function(){
-                console.log(a);
-                return true;
-            },
-            say:function(){
-                alert(a);
-                return true;
-            }   
-        }
-        
-        return privateObject;
+```javascript
+//Consider the function we need to mock:
+function $(a){ 
+    var privateObject = {
+        whisper:function(){
+            console.log(a);
+            return true;
+        },
+        say:function(){
+            alert(a);
+            return true;
+        }   
     }
-    // Notice we cannot get a "mockable" instance of privateObject
-    // but we do know it is going to have a method "say"
-    
-    //our function being tested
-    function iNeedTesting(){
-        var check = $("hello");
         
-        if(check.whisper() && check.say()) console.log("works!");
-    }
+    return privateObject;
+}
+// Notice we cannot get a "mockable" instance of privateObject
+// but we do know it is going to have a method "say"
+    
+//our function being tested
+function iNeedTesting(){
+    var check = $("hello");
+        
+    if(check.whisper() && check.say()) console.log("works!");
+}
     
     
     
     
-    //let's mock the main wrapper
-    $ = Mock($);
+//let's mock the main wrapper
+$ = Mock($);
     
-    var privateObject = Mock.new(["whisper", "say"]);       //create a mock object with methods "whisper" and "say"
+var privateObject = Mock.new(["whisper", "say"]);       //create a mock object with methods "whisper" and "say"
     
-    when( $("hello") ).thenReturn(mockPrivateObject);
-    when( privateObject.whisper() ).thenReturn(true);
-    when( privateObject.say() ).thenReturn(true);
+when( $("hello") ).thenReturn(mockPrivateObject);
+when( privateObject.whisper() ).thenReturn(true);
+when( privateObject.say() ).thenReturn(true);
     
-    iNeedTesting(); //run our function being tested - prints out "works!" to console
+iNeedTesting(); //run our function being tested - prints out "works!" to console
     
-    verify(Acts.once, $("hello"));
-    verify(Acts.once, privateObject.whisper());
-    verify(Acts.once, privateObject.say());
+verify(Acts.once, $("hello"));
+verify(Acts.once, privateObject.whisper());
+verify(Acts.once, privateObject.say());
     
-    //all ok
+//all ok
+```
     
 
 Other Mockito features status
