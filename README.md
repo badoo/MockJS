@@ -272,29 +272,34 @@ Docs 2. MockJS specific features
 
 Other Mockito features status
 ========
-Stuff on Mockito documentation that doesn't show up above
+Stuff on Mockito documentation that we haven't implemented yet
 
-- **6. Verification in order** *//Status: Not Yet Implemented*
-- **7. Making sure interaction(s) never happened on mock** *//Status: Not Yet Implemented*
-- **8. Finding redundant invocations** *//Status: Not Yet Implemented*
-- **10. Stubbing consecutive calls (iterator-style stubbing)** *//Status: Not Yet Implemented*
-- **13. Spying on real objects** *//Status: Not Yet Implemented*
-- **14. Changing default return values of unstubbed invocations** *//Status: Not Yet Implemented*
-- **16. Real partial mocks** *//Status: Not Yet Implemented*
-- **17. Resetting mocks** *//Status: Under Implementation*
-- **19. Aliases for behavior driven development** *//Status: Not Yet Implemented*
-- **20. Serializable mocks** *//Status: Not Yet Implemented*
-- **21. New annotations: @Captor, @Spy, @InjectMocks** *//Status: Not Applicable*
-- **22. Verification with timeout** *//Status: Not Yet Implemented*
-- **23. Automatic instantiation of @Spies, @InjectMocks and constructor injection goodness** *//Status: Not Applicable*
-- **24. One-liner stubs** *//Status: Not Yet Implemented*
-- **25. Verification ignoring stubs** *//Status: Not Yet Implemented*
-- **27. Delegate calls to real instance** *//Status: Not Applicable*
-- **28. MockMaker API** *//Status: Not Applicable*
+- **6. Verification in order**
+- **7. Making sure interaction(s) never happened on mock**
+- **8. Finding redundant invocations**
+- **10. Stubbing consecutive calls (iterator-style stubbing)**
+- **13. Spying on real objects**
+- **14. Changing default return values of unstubbed invocations**
+- **16. Real partial mocks**
+- **17. Resetting mocks**
+- **19. Aliases for behavior driven development**
+- **20. Serializable mocks**
+- **21. New annotations: @Captor, @Spy, @InjectMocks** *//Note: Probably Not Applicable*
+- **22. Verification with timeout**
+- **23. Automatic instantiation of @Spies, @InjectMocks and constructor injection goodness** *//Note: Probably Not Applicable*
+- **24. One-liner stubs**
+- **25. Verification ignoring stubs**
+- **27. Delegate calls to real instance** *//Note: Probably Not Applicable*
+- **28. MockMaker API** *//Note: Probably Not Applicable*
 
-**Stuff we want to do next**
+Something extra we would like to do:
 
-- **107. Make it available as a npm package (Node.js) - pull request anyone? :p
+- **107. Make it available as a npm package (Node.js)**
+
+Pull requests anyone? :p
+
+Credits
+=====
 
 This special cocktail is brought to you by [Badoo Trading Limited](http://corp.badoo.com "Badoo Trading Limited") and it is released under the [MIT License](http://copyfree.org/licenses/mit/license.txt "MIT License") 
 
