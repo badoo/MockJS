@@ -23,7 +23,7 @@ Mock.hookTo(MyTestingTool.globalTestScope);
 
 Quick test / check:
 
-- check and run /src/testception/index.html in your browser (outputs test results in console)
+- check and run /testception/index.html in your browser (outputs test results in console)
 Note: the small *TestSuite* included in testception is a very simplistic tool used to test MockJS itself - MockJS is completely standalone.
 
 Documentation
